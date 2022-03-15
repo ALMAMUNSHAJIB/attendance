@@ -1,6 +1,6 @@
 const EmpAttendance = require("../models/EmpAttendance");
 const Employee = require("../models/Employee");
-exports.getAllEmpAttendanceList = async (req, res) => {
+exports.getAllEmpAttendanceList = async (req, res, next) => {
 	try {
 		const empAttendanceList = await EmpAttendance.find({});
 		res.status(200).json({
@@ -8,32 +8,22 @@ exports.getAllEmpAttendanceList = async (req, res) => {
 			data: empAttendanceList,
 		});
 	} catch (err) {
-		console.log(err);
-		res.status(500).json({
-			message: "Server side error",
-			error: err,
-		});
+		next(err);
 	}
 };
 
-exports.addEmpAttendanceList = async (req, res) => {
-	const emp = await Employee.findOne();
-	const { name, _id } = emp;
-	// console.log(_id);
+exports.addEmpAttendanceList = async (req, res, next) => {
+	const { employeeId } = req.body;
+
 	try {
 		const newAttendanceList = new EmpAttendance({
-			...req.body,
-			emploeyee: _id,
+			employee: employeeId,
 		});
 		await newAttendanceList.save();
 		res.status(201).json({
-			message: "Insterd success!!",
+			message: "Instead success!!",
 		});
 	} catch (err) {
-		console.log(err);
-		res.status(500).json({
-			message: "Insterd failed!!",
-			error: err,
-		});
+		next(err);
 	}
 };

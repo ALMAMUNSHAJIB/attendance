@@ -10,12 +10,12 @@ const empAttendanceDaySchema = Schema(
 		],
 		atteDate: {
 			type: Date,
-			default: 0,
+			default: Date.now,
 		},
 
 		status: {
 			type: String,
-			enum: ["active", "Inactive"],
+			enum: ["active", "inactive"],
 			default: "active",
 		},
 	},

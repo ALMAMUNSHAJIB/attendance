@@ -16,15 +16,15 @@ mongoose
 
 //import router
 const userRouter = require("./routes/user");
-const emploeyeeRouter = require("./routes/emploeyee");
-const attendanceListRouter = require("./routes/emploeyeeAttendance");
+const employeeRouter = require("./routes/employee");
+const attendanceListRouter = require("./routes/employeeAttendance");
 const attendanceDayRouter = require("./routes/empAttendanceDay");
 app.use("/v1/user", userRouter);
-app.use("/v1/emploeyee", emploeyeeRouter);
+app.use("/v1/employee", employeeRouter);
 app.use("/v1/attendace-list", attendanceListRouter);
 app.use("/v1/attendance-day", attendanceDayRouter);
 
-//defalut error handler
+// default error handler
 const errorHandler = (err, req, res, next) => {
 	if (res.headerSent) {
 		return next(err);

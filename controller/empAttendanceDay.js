@@ -1,38 +1,34 @@
-const EmpDayAttendance = require("../models/EmpAttendanceDay");
+const EmpAttendanceDay = require("../models/EmpAttendanceDay");
 const EmpAttendance = require("../models/EmpAttendance");
 
-exports.empAddDayAttendance = async (req, res) => {
-	const empAttendance = await EmpAttendance.findOne();
-	const { totalDay, totalPresent, totalAbsent, _id } = empAttendance;
-	const empAttendanceDay = await EmpDayAttendance.findOne();
-	// const { atteDate } = empAttendanceDay;
-
+exports.empAddDayAttendance = async (req, res, next) => {
 	try {
-		const {} = req.body;
+		const { empAttendanceId, status } = req.body;
 
-		const newAttendDay = new EmpDayAttendance({
-			...req.body,
-			empAttendanceId: _id,
+		const newAttendDay = new EmpAttendanceDay({
+			empAttendanceId,
+			status,
 		});
 		await newAttendDay.save();
 		res.status(201).json({
 			message: "Attendance count",
 		});
 
-		// if(req.boy.atteDate){
-		//     await EmpAttendance.updateOne({
-		//         _id:_id
-		//     }, {
-		//         $push: {
-		//             totalDay: 1
-		//         }
-		//     })
-		// }
+		const totalDay = await EmpAttendanceDay.countDocuments({ empAttendanceId });
+		const totalPresent = await EmpAttendanceDay.countDocuments({ $and: [{ empAttendanceId }, { status: "active" }] });
+		const totalAbsent = await EmpAttendanceDay.countDocuments({ $and: [{ empAttendanceId }, { status: "inactive" }] });
+
+		await EmpAttendance.updateOne(
+			{ _id: empAttendanceId },
+			{
+				totalDay,
+				totalPresent,
+				totalAbsent,
+			}
+		);
+
+		return res.json({ message: "Success" });
 	} catch (err) {
-		console.log(err);
-		res.status(500).json({
-			message: "Attendance Failed",
-			error: err,
-		});
+		next(err);
 	}
 };

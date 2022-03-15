@@ -2,7 +2,7 @@ const User = require("../models/User");
 // const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-exports.getUserController = async (req, res) => {
+exports.getUserController = async (req, res, next) => {
 	try {
 		const user = await User.find().select({ __v: 0, password: 0, name: 0 });
 		if (!user) {
@@ -15,22 +15,19 @@ exports.getUserController = async (req, res) => {
 			data: user,
 		});
 	} catch (err) {
-		console.log(err);
-		res.status(500).json({
-			message: "User not found",
-			error: err,
-		});
+		next(err);
 	}
 };
 
-exports.signupController = async (req, res) => {
+exports.signupController = async (req, res, next) => {
 	try {
 		const saltRounds = 10;
-		const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
-		//    const {name, username, password} = req.body
+		// const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
+		const { name, username, password } = req.body;
 		const newUser = new User({
-			...req.body,
-			password: hashPassword,
+			name,
+			username,
+			password,
 		});
 		await newUser.save();
 		res.status(201).json({
@@ -38,24 +35,22 @@ exports.signupController = async (req, res) => {
 			message: "User was inserted successfuly!!",
 		});
 	} catch (err) {
-		console.log(err);
-		res.status(500).json({
-			message: err,
-		});
+		next(err);
 	}
 };
 
-exports.signinController = async (req, res) => {
+exports.signinController = async (req, res, next) => {
 	try {
-		const user = await User.find({ username: req.body.username });
-		if (user && user.length > 0) {
-			const isValidPassowrd = await bcrypt.compare(req.body.password, user[0].password);
-			if (isValidPassowrd) {
+		const { username, password } = req.body;
+		const user = await User.findOne({ username });
+		if (user) {
+			const isValidPassword = user.password == password;
+			if (isValidPassword) {
 				//token generate
 				const token = jwt.sign(
 					{
-						username: user[0].username,
-						userId: user[0]._id,
+						username: user.username,
+						userId: user._id,
 					},
 					process.env.JWT_SECRET,
 					{
@@ -68,18 +63,15 @@ exports.signinController = async (req, res) => {
 				});
 			} else {
 				res.status(401).json({
-					error: "Authnication failed!!",
+					error: "Authentication failed!!",
 				});
 			}
 		} else {
 			res.status(401).json({
-				error: "Authnication failed!!",
+				error: "Authentication failed!!",
 			});
 		}
 	} catch (err) {
-		console.log(err);
-		res.status(500).json({
-			message: "Server side error",
-		});
+		next(err);
 	}
 };

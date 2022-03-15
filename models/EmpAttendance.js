@@ -15,13 +15,10 @@ const empAttendanceSchema = Schema(
 			default: 0,
 		},
 
-		emploeyee: [
-			{
-				type: Types.ObjectId,
-				ref: "Employee",
-			},
-		],
-
+		employee: {
+			type: Types.ObjectId,
+			ref: "Employee",
+		},
 		status: {
 			type: String,
 			enum: ["active", "inactive"],
