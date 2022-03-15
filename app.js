@@ -21,7 +21,7 @@ const attendanceListRouter = require("./routes/employeeAttendance");
 const attendanceDayRouter = require("./routes/empAttendanceDay");
 app.use("/v1/user", userRouter);
 app.use("/v1/employee", employeeRouter);
-app.use("/v1/attendace-list", attendanceListRouter);
+app.use("/v1/attendance-list", attendanceListRouter);
 app.use("/v1/attendance-day", attendanceDayRouter);
 
 // default error handler

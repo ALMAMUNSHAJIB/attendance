@@ -40,3 +40,23 @@ exports.addEmployee = async (req, res, next) => {
 		next(err);
 	}
 };
+
+exports.employeeQuery = async (req, res, next) => {
+	const { searchKeyWord } = req.body;
+
+	try {
+		let foundEmployee = [];
+		if (searchKeyWord) {
+			function es(str) {
+				return str.replace(/[-\/\\^$*+?()|[\]{}]/g, "");
+			}
+			let KeyWordRegExp = new RegExp("^" + es(searchKeyWord), "i"); // Match from starting
+
+			foundEmployee = await Employee.find({ name: KeyWordRegExp });
+		}
+
+		return res.json({ foundEmployee });
+	} catch (err) {
+		next(err);
+	}
+};

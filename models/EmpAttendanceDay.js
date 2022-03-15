@@ -15,8 +15,8 @@ const empAttendanceDaySchema = Schema(
 
 		status: {
 			type: String,
-			enum: ["active", "inactive"],
-			default: "active",
+			enum: ["present", "absent"],
+			default: "absent",
 		},
 	},
 	{

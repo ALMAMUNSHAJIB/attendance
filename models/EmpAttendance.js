@@ -19,10 +19,6 @@ const empAttendanceSchema = Schema(
 			type: Types.ObjectId,
 			ref: "Employee",
 		},
-		status: {
-			type: String,
-			enum: ["active", "inactive"],
-		},
 	},
 	{
 		timestamps: true,
