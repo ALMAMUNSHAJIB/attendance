@@ -1,35 +1,36 @@
-const {Schema, model, Types} = require('mongoose');
+const { Schema, model, Types } = require("mongoose");
 
-const empAttendanceSchema = Schema({
+const empAttendanceSchema = Schema(
+	{
+		totalDay: {
+			type: Number,
+			default: 0,
+		},
+		totalPresent: {
+			type: Number,
+			default: 0,
+		},
+		totalAbsent: {
+			type: Number,
+			default: 0,
+		},
 
-    totalDay: {
-        type: Number,
-        default: 0
-    },
-    totalPresent: {
-        type: Number,
-        default: 0
-    },
-    totalAbsent: {
-       type: Number,
-       default: 0               
-    },
+		emploeyee: [
+			{
+				type: Types.ObjectId,
+				ref: "Employee",
+			},
+		],
 
-    emploeyee: [
-        {
-            type: Types.ObjectId,
-            ref: 'Emploeyee'
-         }
-    ],
+		status: {
+			type: String,
+			enum: ["active", "inactive"],
+		},
+	},
+	{
+		timestamps: true,
+	}
+);
 
-    status: {
-        type: String,
-        enum: ["active", "inactive"]
-    }
-
-},{
-    timestamps: true
-});
-
-const EmpAttendance = model('EmpAttendance', empAttendanceSchema);
+const EmpAttendance = model("EmpAttendance", empAttendanceSchema);
 module.exports = EmpAttendance;
